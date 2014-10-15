@@ -6,13 +6,19 @@ import java.util.HashSet;
      
      
     public class Main {
+    	private static boolean preprocess =true;
+    	private static boolean generate = false;
      
             /**
              * @param args
              */
             public static void main(String[] args) {
                     try {
-                            Parser p = new Parser();
+                    		if(preprocess){
+                    			Preprocessor p = new Preprocessor(false, 3);
+                    		}
+                    		if(generate){
+                    		Parser p = new Parser();
                             ArrayList<String> lines = p.getRawLines();
                             System.out.println("Number of lines " + lines.size());
                             LanguageModel lm = new LanguageModel(lines, 3);
@@ -22,7 +28,7 @@ import java.util.HashSet;
                                 System.out.println(lm.generateNiceVerse());
 								
 							}
-      
+                    		}
 
                     } catch (IOException e) {
                             e.printStackTrace();

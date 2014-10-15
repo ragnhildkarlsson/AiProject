@@ -63,7 +63,7 @@ public class Tagger {
 		temp.clear();
 		String string = input;
 		string = tagger.tagString(string);
-		String[] taggedWords = string.split("\\s");
+		String[] taggedWords = string.split("\\s+");
 		
 		for (int j = 0; j < taggedWords.length; j++) {
 			String[] res = taggedWords[j].split("/");
@@ -77,6 +77,7 @@ public class Tagger {
 		String[] template = temp.toArray(a);					
 	return new nGram(template);
 	}
+	
 	
 	public HashSet<nGram> generateTemplates(ArrayList<String> rawLines){		
 		HashSet<nGram> templates = new HashSet<>();
@@ -102,22 +103,63 @@ public class Tagger {
 		
 		return templates;
 	}
+	    
+//         for (int i = 0; i < rawLines.size(); i++) {
+//                 String line = rawLines.get(i);
+//                 line = STARTSYMB +" "+ line + " "+ STOPSYMB;
+//                 String[] words = line.split("\\s+");
+//                 for (int j = 0; j < words.length; j++) {
+//                         String[] nGramStrings = new String[N];
+//                         for (int k = 0; k < nGramStrings.length; k++) {
+//                                 if(words.length-j>=N){
+//                                         nGramStrings[k]=words[j+k];
+//                                 }
+//                         }
+//                         if(nGramStrings[0]==null){
+//                             break;
+//                     }
+//                          nGram ngram = new nGram(nGramStrings);
+//                         if(j==0){
+//                                 startGrams.add(ngram);
+//                         }
+//                        
+//                         
+//                        
+//                         if(!nGrams.containsKey(ngram)){
+//                                 nGrams.put(ngram, 1);
+//                         }
+//                         else{
+//                                 int value = nGrams.get(ngram);
+//                                 value++;
+//                                 nGrams.put(ngram, value);
+//                         }
+//                        
+//                 }
+//                
+//                
+//         }
+//        
+//        
+// }
+//	
 	
-//	private void printTemplatesToFile(ArrayList<String> rawLines) throws IOException{
-//	HashSet<nGram> templates = generateTemplates(rawLines);
-//    File folder = new File("templates");
-//    System.err.println(folder.exists());
-//    File[] listOfFiles = folder.listFiles();
-//	File file = listOfFiles[0];
-//	FileWriter write =new FileWriter(file.getPath(),true);
-//	PrintWriter printer = new PrintWriter(write);
-//
-//    for (nGram template : templates) {
-//        for (int j = 0; j < template.length(); j++) {
-//            printer.print(template.getWord(j)+" ");   
-//        }
-//        printer.println(" ");
-//    }		
-//
-//}	
+
+	public void printTemplatesToFile(ArrayList<String> rawLines) throws IOException{
+	HashSet<nGram> templates = generateTemplates(rawLines);
+	File file = new File("templates/templates.txt");
+	if(file.exists()){
+		file.delete();
+	}
+	file.createNewFile();
+	FileWriter write =new FileWriter(file.getPath(),true);
+	PrintWriter printer = new PrintWriter(write);
+
+    for (nGram template : templates) {
+        for (int j = 0; j < template.length(); j++) {
+            printer.print(template.getWord(j)+" ");   
+        }
+        printer.println(" ");
+    }		
+    printer.close();
+	}	
 }

@@ -11,7 +11,7 @@ import java.util.Set;
     public class LanguageModel {
     	
            
-            
+    
     		private int nTrialVerses = 20;
     		private int maxIter = 10;
     		private HashMap<nGram, Integer> nGrams;
