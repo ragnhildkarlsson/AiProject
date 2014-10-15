@@ -1,29 +1,42 @@
 	
 
-    import java.util.ArrayList;
-    import java.util.HashMap;
-    import java.util.Random;
+    import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
      
      
     public class LanguageModel {
+    	
            
-            private HashMap<nGram, Integer> nGrams;
+            
+    		private int nTrialVerses = 20;
+    		private int maxIter = 10;
+    		private HashMap<nGram, Integer> nGrams;
             private final String STARTSYMB = "STARTSYM";
             private final String STOPSYMB = "STOPSYM";
             private ArrayList<String> rawLines;
             final int N;
             private Random rand = new Random();
             private ArrayList<nGram> startGrams;
+            private HashSet<nGram> templates;
+            private Tagger tagger;
            
-            public LanguageModel(ArrayList<String> rawLines, int n){
+            
+            public LanguageModel(ArrayList<String> rawLines, int n) throws ClassNotFoundException, IOException{
                     nGrams = new HashMap<nGram, Integer>();
                     startGrams = new ArrayList<nGram>();
                     this.rawLines = rawLines;
                     N = n;
                     buildModel();
-                   
+                    this.templates = templates;
+                    
+                    tagger = new Tagger();
+                    templates = tagger.getTemplates();
             }
+            
             public void printAllNgrams(){
                     Set<nGram> keys = nGrams.keySet();
                     for (nGram ngram : keys) {
@@ -34,6 +47,38 @@ import java.util.Set;
                             System.out.println(" ");
                     }
             }
+            public void printTemplates(){
+            	for (nGram template : templates) {
+                    for (int j = 0; j < template.length(); j++) {
+                        System.out.print(template.getWord(j)+" ");
+                    }
+                    System.out.println(" ");
+            	}
+            }
+            public String generateNiceVerse(){
+            	
+            	String[] trialVerses = new String[this.nTrialVerses];
+            	ArrayList<String> niceVerses = new ArrayList<String>();
+            	for (int i = 0; i < nTrialVerses; i++) {
+            		trialVerses[i] = generateVerse();	
+				}
+            	for (int i = 0; i < trialVerses.length; i++) {
+					String string = trialVerses[i];
+					nGram template = tagger.getTags(string);
+					//System.out.println("\nWords are " + string);
+					//System.out.println("Looking for template " + template.toString());
+					if(templates.contains(template)){
+						niceVerses.add(string);
+					}
+				}
+            	if(niceVerses.isEmpty()){
+            		System.out.println("no nice verses found, picking random not nice verse: ");
+            		return trialVerses[rand.nextInt(nTrialVerses)];
+            	} else { // nice verses exists!
+            		return niceVerses.get(rand.nextInt(niceVerses.size()));
+            	}    	
+            }
+            
             public String generateVerse(){
                     String[] start = getStartGram().getWords();
 //                    for (int i = 0; i < start.length; i++) {
@@ -44,7 +89,6 @@ import java.util.Set;
                     ArrayList<DistributionElement> distribution= new ArrayList<DistributionElement>();
                     
                     int iter = 0;
-                    int maxIter = 8;
                     while (!verse.get(verse.size()-1).equals(STOPSYMB)){
                             distribution.clear();
                             int sum = 0;
@@ -82,6 +126,12 @@ import java.util.Set;
                                             break;
                                     }
                             }
+                            // finish this very long verse!
+                            if(iter > maxIter*3){
+                            	nextWord = STOPSYMB;
+                            	
+                            }
+                            // try to finish the verse
                             if(iter > maxIter){
                             	for (int i = 0; i < distribution.size(); i++){
                             		if(distribution.get(i).word.equals(STOPSYMB)){
@@ -90,6 +140,7 @@ import java.util.Set;
                             	
                             }
                             }
+                            
                             //System.out.println("Next word was "  + nextWord);
                             verse.add(nextWord);
                             iter++;
@@ -97,7 +148,7 @@ import java.util.Set;
                            
                     }
                     StringBuilder sb = new StringBuilder();
-                    for (int i = 0; i < verse.size(); i++) {
+                    for (int i = 1; i < verse.size()-1; i++) {
                             sb.append(verse.get(i));
                             sb.append(" ");
                     }

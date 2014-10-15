@@ -47,4 +47,15 @@ public class nGram {
 		return words.length;
 	}
 
+	@Override
+	public String toString() {
+		String string = "";
+		for (int i = 0; i < words.length; i++) {
+			
+			string = string + words[i] + " ";
+			
+		}
+		return string;
+	}
+
 }

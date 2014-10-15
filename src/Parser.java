@@ -31,7 +31,7 @@
            
             public void readLyrics() throws IOException{
                     File folder = new File("lyrics");
-                    //System.err.println(folder.exists());
+                    System.err.println(folder.exists());
                     File[] listOfFiles = folder.listFiles();
                    
                     for (int i = 0; i < listOfFiles.length; i++) {
