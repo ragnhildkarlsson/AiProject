@@ -6,30 +6,45 @@ import java.util.HashSet;
      
      
     public class Main {
-    	private static boolean preprocess =true;
+    	private static boolean preprocess =false;
     	private static boolean generate = false;
-     
+    	private static boolean evaluate = true;
+    	private static int MINOCURENCE = 1;
+    	private static int SAMPLESIZE = 1000;
             /**
              * @param args
              */
             public static void main(String[] args) {
                     try {
+                			Parser p = new Parser();
+                			ArrayList<String> rawLinesUnique = p.getRawLines(true);
+                			ArrayList<String> rawLines = p.getRawLines(false);
+                    		
                     		if(preprocess){
-                    			Preprocessor p = new Preprocessor(false, 3);
+                    		Tagger t = new Tagger(MINOCURENCE);
+                    		t.printTemplatesToFile(rawLinesUnique);
+                    		//	Preprocessor p = new Preprocessor(false, 3);
                     		}
+                    		LanguageModel lm = new LanguageModel(rawLines, 3,MINOCURENCE);
                     		if(generate){
-                    		Parser p = new Parser();
-                            ArrayList<String> lines = p.getRawLines();
-                            System.out.println("Number of lines " + lines.size());
-                            LanguageModel lm = new LanguageModel(lines, 3);
+                    		
+                            System.out.println("Number of lines " + rawLines.size());
                             //lm.printTemplates();                            //lm.printAllNgrams();
                             
-                            for (int i = 0; i < 200; i++) {
-                                System.out.println(lm.generateNiceVerse());
+                            ArrayList<String> versesGenerated = new ArrayList<String>();
+                            for (int i = 0; i < 100; i++) {
+                            	String verse = lm.generateNiceVerse();
+                                //System.out.println(verse);
+                                versesGenerated.add(verse);
 								
-							}
+								}
                     		}
-
+                    		if(evaluate){
+                            Evaluator eval = new Evaluator(MINOCURENCE, SAMPLESIZE,rawLinesUnique);
+                            eval.evaluate(lm);
+                    		}
+                            
+    
                     } catch (IOException e) {
                             e.printStackTrace();
                     } catch (ClassNotFoundException e) {

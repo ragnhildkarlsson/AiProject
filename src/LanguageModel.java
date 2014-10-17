@@ -25,7 +25,7 @@ import java.util.Set;
             private Tagger tagger;
            
             
-            public LanguageModel(ArrayList<String> rawLines, int n) throws ClassNotFoundException, IOException{
+            public LanguageModel(ArrayList<String> rawLines, int n,int minOccurence) throws ClassNotFoundException, IOException{
                     nGrams = new HashMap<nGram, Integer>();
                     startGrams = new ArrayList<nGram>();
                     this.rawLines = rawLines;
@@ -33,7 +33,7 @@ import java.util.Set;
                     buildModel();
                     this.templates = templates;
                     
-                    tagger = new Tagger();
+                    tagger = new Tagger(minOccurence);
                     templates = tagger.getTemplates();
             }
             
@@ -55,6 +55,16 @@ import java.util.Set;
                     System.out.println(" ");
             	}
             }
+            
+            public boolean isSyntaxCorrect(String verse){	
+            	nGram template = tagger.getTags(verse);
+            	if(templates.contains(template)){
+					return true;
+				}
+            	return false;
+            }
+            
+            
             public String generateNiceVerse(){
             	
             	String[] trialVerses = new String[this.nTrialVerses];
@@ -67,7 +77,7 @@ import java.util.Set;
 					nGram template = tagger.getTags(string);
 					//System.out.println("\nWords are " + string);
 					//System.out.println("Looking for template " + template.toString());
-					if(templates.contains(template)){
+					if(templates.contains(template) && template.length() >= 3){
 						niceVerses.add(string);
 					}
 				}

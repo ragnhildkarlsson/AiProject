@@ -1,28 +1,43 @@
 	
 
     import java.io.BufferedReader;
-    import java.io.File;
-    import java.io.FileReader;
-    import java.io.IOException;
-    import java.util.ArrayList;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
      
      
     public class Parser {
      
            
             ArrayList<String> rawLines;
+            HashSet<String> uniqueLines;
            
            
             public Parser() throws IOException{
-           
+            		uniqueLines = new HashSet<>();
                     rawLines = new ArrayList<String>();
                     readLyrics();
+                    System.out.println("Number of lines in indata "+ rawLines.size());
+                    System.out.println("Number of unique lines in indata "+ uniqueLines.size());
+                       
                     //TODO TAG Lyrics
             }
            
            
-            public ArrayList<String> getRawLines(){
-                    return rawLines;
+            public ArrayList<String> getRawLines(boolean unique){
+
+            	ArrayList<String> result = new ArrayList<>();
+            	if(unique){
+            		for (String string : uniqueLines) {
+						result.add(string);
+					}
+            		                }
+            	else{
+            		result = rawLines;
+            	}
+            	return result;
             }
            
             public void printRawLines(){
@@ -40,6 +55,7 @@
                     String line;
                     while ((line = br.readLine()) != null) {
                             rawLines.add(line);
+                            uniqueLines.add(line);
                     }
                     br.close();    
                     }
