@@ -6,10 +6,10 @@ import java.util.HashSet;
      
      
     public class Main {
-    	private static boolean preprocess =false;
+    	private static boolean preprocess =true;
     	private static boolean generate = false;
-    	private static boolean evaluate = true;
-    	private static int MINOCURENCE = 1;
+    	private static boolean evaluate = false;
+    	private static int MINOCURENCE = 2;
     	private static int SAMPLESIZE = 1000;
             /**
              * @param args
@@ -23,7 +23,7 @@ import java.util.HashSet;
                     		if(preprocess){
                     		Tagger t = new Tagger(MINOCURENCE);
                     		t.printTemplatesToFile(rawLinesUnique);
-                    		//	Preprocessor p = new Preprocessor(false, 3);
+                    			Preprocessor pre = new Preprocessor(false, 3,MINOCURENCE);
                     		}
                     		LanguageModel lm = new LanguageModel(rawLines, 3,MINOCURENCE);
                     		if(generate){
